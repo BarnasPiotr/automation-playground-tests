@@ -1,0 +1,19 @@
+# Core framework
+robotframework>=7.3.2
+
+# Web testing
+robotframework-browser
+robotframework-seleniumlibrary
+
+
+# API testing
+robotframework-requests
+robotframework-jsonlibrary
+
+
+# Mobile testing
+robotframework-appiumlibrary
+
+
+# Other
+robotframework-datadriver

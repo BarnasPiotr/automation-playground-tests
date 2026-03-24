@@ -1,0 +1,60 @@
+name: Run Robot Framework Tests
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Tags to run (leave empty to run all tests)'
+        required: false
+      email:
+        description: 'Email to report (optional)'
+        required: false
+
+jobs:
+  robot-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          rfbrowser init
+
+      - name: Create results directories
+        run: |
+          mkdir -p Results/Web
+          mkdir -p Results/API
+
+      - name: Run Web tests
+        run: |
+          TAG_OPTION=""
+          if [ "${{ github.event.inputs.tags }}" != "" ]; then
+            TAG_OPTION="-i ${{ github.event.inputs.tags }}"
+          fi
+          robot -d Results/Web $TAG_OPTION Tests_Web/Tests
+
+      - name: Run API tests
+        run: |
+          TAG_OPTION=""
+          if [ "${{ github.event.inputs.tags }}" != "" ]; then
+            TAG_OPTION="-i ${{ github.event.inputs.tags }}"
+          fi
+          robot -d Results/API $TAG_OPTION Tests_API/Tests
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-results
+          path: Results/

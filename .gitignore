@@ -1,0 +1,10 @@
+.idea/
+.DS_Store
+__pycache__/
+*.pyc
+log.html
+report.html
+output.xml
+playwright-log.txt
+.pabotsuitenames
+Results/
